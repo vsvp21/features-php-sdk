@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature;
 
 use Feature\Interfaces\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 trait HasFeaturesTrait
 {
@@ -25,5 +26,14 @@ trait HasFeaturesTrait
     protected function featureFlags(): array
     {
         return [];
+    }
+
+    /**
+     * @throws GuzzleException
+     * @return array<string, Feature>
+     */
+    public function allFeatures(): array
+    {
+        return app(ClientInterface::class)->getAllFeatures((string) $this->getAttribute($this->targetingKeyField()));
     }
 }
