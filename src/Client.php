@@ -111,6 +111,22 @@ class Client implements Interfaces\ClientInterface
         return [];
     }
 
+    public function getTargetsByFeatureName(string $featureName): array
+    {
+        try {
+            $response = $this->client->get("/feature-flags/features/{$featureName}/targets");
+
+            /** @var array<string, string[]> $data */
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return $data['data'];
+        } catch (RequestException $exception) {
+            $this->handleException($exception);
+        }
+
+        return [];
+    }
+
     private function handleException(RequestException $exception): void
     {
         $response = $exception->getResponse();

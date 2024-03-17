@@ -23,4 +23,10 @@ interface ClientInterface
      * @return array<string, array<string, Feature>>
      */
     public function getFeaturesForTargetingKeys(array $targetingKeys): array;
+
+    /**
+     * @param string $featureName
+     * @return string[]
+     */
+    public function getTargetsByFeatureName(string $featureName): array;
 }
