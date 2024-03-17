@@ -13,7 +13,11 @@ final class ServiceProvider extends SupportServiceProvider
     public function register()
     {
         $this->app->bind(ClientInterface::class, function () {
-            return new Client((string) Config::get('feature.url'), (float) Config::get('feature.timeout'));
+            return new Client(
+                (string) Config::get('feature.url'),
+                (float) Config::get('feature.timeout'),
+                (int) Config::get('feature.max_tries'),
+            );
         });
     }
 

@@ -8,14 +8,22 @@ use Feature\Exceptions\FeatureNotFoundException;
 use Feature\Exceptions\WrongTargetingKeyException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\RetryMiddleware;
 
 class Client implements Interfaces\ClientInterface
 {
     private \GuzzleHttp\Client $client;
 
-    public function __construct(string $baseUri, float $timeout = 3.0)
+    public function __construct(string $baseUri, float $timeout = 3.0, int $maxTries = 3)
     {
+        $handlerStack = HandlerStack::create();
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $handlerStack->push(Middleware::retry(new RetryDecider($maxTries), fn () => RetryMiddleware::exponentialDelay($maxTries)));
+
         $this->client = new \GuzzleHttp\Client([
+            'handler' => $handlerStack,
             'base_uri' => $baseUri,
             'timeout'  => $timeout,
         ]);
